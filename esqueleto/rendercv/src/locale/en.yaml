@@ -1,0 +1,4 @@
+locale:
+  language: english
+  phrases:
+    degree_with_area: DEGREE in AREA

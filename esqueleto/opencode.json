@@ -1,0 +1,43 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "identidad": {
+      "type": "local",
+      "command": ["tools/.venv/Scripts/python.exe", "tools/mcp_identidad/server.py"],
+      "enabled": true,
+      "environment": {
+        "CREDLY_USER": "<TU_USUARIO_CREDLY>",
+        "SKILLSBOOST_PROFILE_URL": "<URL_DE_TU_PERFIL_PUBLICO_DE_GOOGLE_SKILLS>"
+      }
+    },
+    "empleo": {
+      "type": "local",
+      "command": ["tools/.venv/Scripts/python.exe", "tools/mcp_empleo/server.py"],
+      "enabled": true
+    }
+  },
+  "permission": {
+    "edit": "ask",
+    "webfetch": "allow",
+    "websearch": "allow",
+    "bash": {
+      "*": "ask",
+      "gh repo list*": "allow",
+      "gh api*": "allow",
+      "gh auth status": "allow",
+      "gh repo view*": "allow",
+      "gh repo edit*": "ask",
+      "gh repo clone*": "ask",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git commit*": "ask",
+      "git push*": "ask",
+      "python tools/*": "allow",
+      "tools/.venv/Scripts/python.exe tools/*": "allow"
+    },
+    "skill": {
+      "*": "allow"
+    }
+  }
+}

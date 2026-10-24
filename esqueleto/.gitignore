@@ -1,0 +1,18 @@
+# Entornos virtuales (se recrean con scripts/instalar.ps1)
+tools/.venv/
+rendercv/rendercv-env/
+
+# Builds temporales
+rendercv/build/
+
+# Python
+__pycache__/
+*.pyc
+
+# Caché y sesiones de navegador
+.firecrawl/
+tools/mcp_identidad/.session/
+
+# Sistema
+.DS_Store
+*.log

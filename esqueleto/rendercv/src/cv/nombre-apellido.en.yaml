@@ -1,0 +1,74 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/rendercv/rendercv/refs/tags/v2.8/schema.json
+# EXAMPLE CV. Replace all content with your own before applying.
+# Keep this file aligned with the Spanish version (same facts, same dates).
+# Text between «...» is a placeholder; RenderCV/Typst prints it literally, so
+# remove it when you personalize the file.
+cv:
+  name: Nombre Apellido
+  headline: Cloud Support Engineer | Junior DevOps
+  location: City, Country
+  email: your-email@example.com
+  phone: '+12025550123'
+  social_networks:
+  - network: LinkedIn
+    username: your-linkedin-user
+  - network: GitHub
+    username: your-github-user
+  sections:
+    professional_profile:
+    - «AREA» professional focused on cloud support and operations. Hands-on with
+      «TECHNOLOGY 1», «TECHNOLOGY 2» and «TECHNOLOGY 3» in academic or work
+      production environments. Focused on monitoring, incident diagnosis and
+      technical documentation. «3-4 lines max.»
+    experience:
+    - company: Example Company
+      position: Support Intern
+      start_date: 2025-01
+      end_date: 2025-06
+      location: Remote
+      highlights:
+      - Monitored production services and reviewed logs to catch failures early.
+      - Handled «TYPE» incidents end to end — diagnosis, mitigation and root
+        cause documentation.
+      - Automated a repetitive task with «TOOL», cutting manual work by
+        «VERIFIABLE METRIC».
+    education:
+    - institution: Example University
+      area: Systems Engineering
+      degree: B.Sc.
+      start_date: 2019-01
+      end_date: 2026-01
+      location: City, Country
+      highlights:
+      - "GPA: X.X/5.0"
+    certifications_and_courses:
+    - name: Example Certification (Issuer)
+      summary: What it covered and what you can do with it.
+      date: 2025-06
+    - name: Example Course (Issuer)
+      summary: What it covered and what you can do with it.
+      date: 2025-03
+    technical_skills:
+    - label: Infrastructure and Cloud
+      details: AWS (EC2, VPC, IAM), Terraform, Docker, Linux.
+    - label: Operations and Support
+      details: Log monitoring, troubleshooting, incident management, ITIL.
+    - label: Development and Automation
+      details: Python, Bash, REST APIs, Git/GitHub.
+    - label: Languages
+      details: Spanish (native), English (B1).
+    projects:
+    - name: '[Project name](https://github.com/your-user/your-repo)'
+      date: 2025-11
+      summary: One line about the problem it solves and how.
+      highlights:
+      - Measurable result «1» (latency, coverage, time saved).
+      - Relevant technical decision and the reason behind it.
+    - name: '[Second project](https://github.com/your-user/other-repo)'
+      date: 2025-08
+      summary: One line about the problem it solves and how.
+      highlights:
+      - Measurable result «1».
+    interests:
+    - bullet: Interest 1.
+    - bullet: Interest 2.

@@ -1,0 +1,11 @@
+design:
+  theme: engineeringresumes
+  templates:
+    education_entry:
+      main_column: |-
+        **INSTITUTION**
+        DEGREE_WITH_AREA -- LOCATION
+        SUMMARY
+        HIGHLIGHTS
+      degree_column: null
+      date_and_location_column: DATE

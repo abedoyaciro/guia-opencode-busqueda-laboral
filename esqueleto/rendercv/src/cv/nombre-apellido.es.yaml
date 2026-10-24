@@ -1,0 +1,75 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/rendercv/rendercv/refs/tags/v2.8/schema.json
+# CV de EJEMPLO. Reemplaza todo el contenido por el tuyo antes de postular.
+# Estructura: una sección por bloque; el orden del archivo es el orden en el PDF.
+# Los textos entre «...» son placeholders: RenderCV/Typst los imprime tal cual,
+# así que bórralos al personalizar.
+cv:
+  name: Nombre Apellido
+  headline: Cloud Support Engineer | Junior DevOps
+  location: Ciudad, País
+  email: tu-correo@ejemplo.com
+  phone: '+12025550123'
+  social_networks:
+  - network: LinkedIn
+    username: tu-usuario-linkedin
+  - network: GitHub
+    username: tu-usuario-github
+  sections:
+    perfil_profesional:
+    - Profesional de «ÁREA» orientado a soporte cloud y operaciones. Experiencia
+      con «TECNOLOGÍA 1», «TECNOLOGÍA 2» y «TECNOLOGÍA 3» en entornos de
+      producción académicos o laborales. Enfocado en monitoreo, diagnóstico de
+      incidentes y documentación técnica. «Máximo 3-4 líneas.»
+    experiencia:
+    - company: Empresa Ejemplo
+      position: Practicante de Soporte
+      start_date: 2025-01
+      end_date: 2025-06
+      location: Remoto
+      highlights:
+      - Monitoreo de servicios en producción y revisión de logs para detectar
+        fallas antes de que escalaran.
+      - Atención de incidentes de «TIPO» con diagnóstico, mitigación y registro
+        de la causa raíz.
+      - Automatización de una tarea repetitiva con «HERRAMIENTA», que redujo el
+        trabajo manual en «MÉTRICA VERIFICABLE».
+    educación:
+    - institution: Universidad Ejemplo
+      area: Ingeniería de Sistemas
+      degree: Ingeniería
+      start_date: 2019-01
+      end_date: 2026-01
+      location: Ciudad, País
+      highlights:
+      - "Promedio acumulado: X.X/5.0"
+    certificaciones_y_cursos:
+    - name: Certificación Ejemplo (Emisor)
+      summary: Qué cubrió y qué sabes hacer con eso.
+      date: 2025-06
+    - name: Curso Ejemplo (Emisor)
+      summary: Qué cubrió y qué sabes hacer con eso.
+      date: 2025-03
+    habilidades_técnicas:
+    - label: Infraestructura y Cloud
+      details: AWS (EC2, VPC, IAM), Terraform, Docker, Linux.
+    - label: Operación y Soporte
+      details: Monitoreo de logs, troubleshooting, gestión de incidentes, ITIL.
+    - label: Desarrollo y Automatización
+      details: Python, Bash, APIs REST, Git/GitHub.
+    - label: Idiomas
+      details: Español (nativo), Inglés (B1).
+    proyectos:
+    - name: '[Nombre del proyecto](https://github.com/tu-usuario/tu-repo)'
+      date: 2025-11
+      summary: Una línea sobre el problema que resuelve y cómo.
+      highlights:
+      - Resultado medible «1» (latencia, cobertura, tiempo ahorrado).
+      - Decisión técnica relevante y su porqué.
+    - name: '[Segundo proyecto](https://github.com/tu-usuario/otro-repo)'
+      date: 2025-08
+      summary: Una línea sobre el problema que resuelve y cómo.
+      highlights:
+      - Resultado medible «1».
+    intereses_personales:
+    - bullet: Interés 1.
+    - bullet: Interés 2.
