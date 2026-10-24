@@ -147,6 +147,24 @@ con `/connect`. Para un endpoint compatible con OpenAI:
 }
 ```
 
+### Modelo recomendado para esta guía
+
+V2 incluye proveedores listos para usar: con `/connect` o `/model` eliges el
+modelo sin escribir configuración. Para todo el flujo de esta guía:
+
+```
+opencode/deepseek-v4.1-flash-free
+```
+
+Es gratis, rápido y sigue bien instrucciones largas, que es lo que piden los
+prompts de las skills. Para fijarlo en el proyecto, añade a `opencode.json`:
+
+```json
+{ "model": "opencode/deepseek-v4.1-flash-free" }
+```
+
+Para listar lo disponible desde la terminal: `opencode models`.
+
 Reglas prácticas:
 
 - Nunca escribas la API key en el archivo. Usa `{env:VARIABLE}` o

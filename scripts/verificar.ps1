@@ -51,18 +51,24 @@ foreach ($rel in @(
 
 Seccion '2. opencode.json válido'
 $cfg = Join-Path $Raiz 'opencode.json'
+$hayMcp = $false
 if (Test-Path $cfg) {
     try {
         $json = Get-Content $cfg -Raw | ConvertFrom-Json
         Ok 'JSON parseado'
-        if ($json.mcp.empleo) { Ok 'MCP empleo declarado' } else { Falta 'MCP empleo no está en opencode.json' }
-        if ($json.mcp.identidad) { Ok 'MCP identidad declarado' } else { Falta 'MCP identidad no está en opencode.json' }
-        $creds = $json.mcp.identidad.environment.CREDLY_USER
-        if ($creds -and $creds -notmatch '<') { Ok "CREDLY_USER = $creds" }
-        else { Falta 'CREDLY_USER sigue con placeholder o vacío' }
-        $sb = $json.mcp.identidad.environment.SKILLSBOOST_PROFILE_URL
-        if ($sb -and $sb -notmatch '<') { Ok 'SKILLSBOOST_PROFILE_URL configurado' }
-        else { Aviso 'SKILLSBOOST_PROFILE_URL con placeholder: la sincronización de Google Skills fallará' }
+        $hayMcp = [bool]$json.mcp
+        if (-not $hayMcp) {
+            Aviso 'modo CV: opencode.json no declara servidores MCP (no hacen falta para generar el CV)'
+        } else {
+            if ($json.mcp.empleo) { Ok 'MCP empleo declarado' } else { Falta 'MCP empleo no está en opencode.json' }
+            if ($json.mcp.identidad) { Ok 'MCP identidad declarado' } else { Falta 'MCP identidad no está en opencode.json' }
+            $creds = $json.mcp.identidad.environment.CREDLY_USER
+            if ($creds -and $creds -notmatch '<') { Ok "CREDLY_USER = $creds" }
+            else { Falta 'CREDLY_USER sigue con placeholder o vacío' }
+            $sb = $json.mcp.identidad.environment.SKILLSBOOST_PROFILE_URL
+            if ($sb -and $sb -notmatch '<') { Ok 'SKILLSBOOST_PROFILE_URL configurado' }
+            else { Aviso 'SKILLSBOOST_PROFILE_URL con placeholder: la sincronización de Google Skills fallará' }
+        }
     } catch {
         Falta "opencode.json no parsea: $($_.Exception.Message)"
     }
@@ -76,8 +82,10 @@ if (Test-Path $pyTools) {
     if ($LASTEXITCODE -eq 0) { Ok $imports } else { Falta "faltan dependencias: $imports" }
     & $pyTools -c 'from playwright.sync_api import sync_playwright' 2>&1 | Out-Null
     if ($LASTEXITCODE -eq 0) { Ok 'Playwright importable' } else { Falta 'Playwright no importa' }
+} elseif ($hayMcp) {
+    Falta 'no existe tools/.venv y opencode.json declara servidores MCP (ejecuta scripts/instalar.ps1)'
 } else {
-    Falta 'no existe tools/.venv (ejecuta scripts/instalar.ps1)'
+    Aviso 'no existe tools/.venv: modo CV, no hace falta para renderizar'
 }
 
 Seccion '4. Entorno de RenderCV (rendercv/rendercv-env)'
@@ -96,23 +104,34 @@ $pyYaml = if (Test-Path $pyTools) { $pyTools } else { $pyRcv }
 if (Test-Path $pyYaml) {
     $yamls = Get-ChildItem -Recurse (Join-Path $Raiz 'rendercv\src') -Include *.yaml,*.yml -File
     if ($yamls) {
-        $res = & $pyYaml -c 'import sys, yaml
-for p in sys.argv[1:]:
-    yaml.safe_load(open(p, encoding="utf-8"))
+        # PyYAML en tools/.venv, ruamel.yaml en el venv de RenderCV.
+        $res = & $pyYaml -c 'import sys
+try:
+    import yaml
+except ImportError:
+    from ruamel.yaml import YAML
+    y = YAML(typ="safe")
+    for p in sys.argv[1:]:
+        y.load(open(p, encoding="utf-8"))
+else:
+    for p in sys.argv[1:]:
+        yaml.safe_load(open(p, encoding="utf-8"))
 print("yaml ok")' @($yamls.FullName) 2>&1
         if ($LASTEXITCODE -eq 0) { Ok "$($yamls.Count) YAML parseados" } else { Falta "YAML inválido: $res" }
     } else {
         Aviso 'no hay YAML en rendercv/src'
     }
 } else {
-    Aviso 'no hay intérprete con PyYAML para validar los YAML'
+    Aviso 'no hay intérprete con PyYAML/ruamel para validar los YAML'
 }
 
 Seccion '6. Herramientas externas'
 if (Get-Command opencode -ErrorAction SilentlyContinue) {
     Ok "opencode $(& opencode --version 2>&1)"
-} else {
+} elseif ($hayMcp) {
     Falta 'opencode no está en el PATH'
+} else {
+    Aviso 'opencode no está en el PATH: modo CV, no lo necesitas'
 }
 if (Get-Command gh -ErrorAction SilentlyContinue) {
     & gh auth status 2>&1 | Out-Null

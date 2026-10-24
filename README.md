@@ -32,11 +32,37 @@ decides.
      └──────────────────────────────┘
 ```
 
+## Elige tu camino
+
+| Quieres | Ve a | Tiempo |
+|---|---|---|
+| **Solo un PDF** de tu CV (y ya tienes tu YAML) | [Ruta B: solo RenderCV](docs/11-ruta-rapida.md#ruta-b--solo-rendercv-sin-opencode) | 5 min |
+| **El sistema completo** (CV + vacantes + análisis) | [ARRANQUE.md](ARRANQUE.md) | 15-25 min |
+
+Para la ruta completa, el atajo es: `npm install -g @opencode/cli`,
+`opencode` en una carpeta vacía, y pegar el prompt de
+[ARRANQUE.md](ARRANQUE.md) con el enlace de este repo y la ruta de tu YAML.
+OpenCode clona, configura, adopta tu plantilla y te guía.
+
+**Modelo recomendado: `opencode/deepseek-v4.1-flash-free`** (se elige con
+`/model`). Es gratis y la lógica del sistema vive en las skills del repo, así que
+no necesitas un modelo caro.
+
 ## Quickstart
+
+Atajo, si ya sabes lo que haces:
+
+```powershell
+git clone https://github.com/abedoyaciro/guia-opencode-busqueda-laboral guia-busqueda-laboral
+pwsh -File guia-busqueda-laboral\scripts\arranque.ps1 -Destino C:\ruta\busqueda-laboral -PlantillaCv C:\ruta\mi-cv.yaml
+opencode C:\ruta\busqueda-laboral
+```
+
+Paso a paso, sin prisa:
 
 ```powershell
 # 1. Clonar esta guía
-git clone <URL_DE_ESTE_REPO> guia-busqueda-laboral
+git clone https://github.com/abedoyaciro/guia-opencode-busqueda-laboral guia-busqueda-laboral
 
 # 2. Crear tu workspace (copia el esqueleto + crea los dos venvs)
 pwsh -File guia-busqueda-laboral\scripts\instalar.ps1 -Destino C:\ruta\busqueda-laboral
@@ -67,9 +93,10 @@ Primera sesión útil, en orden:
 
 | Carpeta | Contenido |
 |---|---|
+| `ARRANQUE.md` | Prompt listo para pegar en OpenCode: clona, configura y te guía |
 | `docs/` | La guía, en orden de lectura: instalación → configuración → uso → personalización → problemas |
 | `esqueleto/` | Workspace listo para copiar: `opencode.json`, `AGENTS.md`, `.opencode/` (agentes, comandos, skills, plugin), `tools/` (servidores MCP y scripts) y un CV de ejemplo que renderiza |
-| `scripts/` | `instalar.ps1` (crea el workspace y los venvs) y `verificar.ps1` (comprueba que todo funciona) |
+| `scripts/` | `instalar.ps1` (crea el workspace y los venvs), `arranque.ps1` (todo en uno + adopta tu YAML), `verificar.ps1` (comprueba que funciona) y `versionar-solo.ps1` (release sin workspace) |
 
 Los textos entre «...» y `<\...>` son placeholders para que los reemplaces.
 
@@ -85,13 +112,14 @@ Los textos entre «...» y `<\...>` son placeholders para que los reemplaces.
 8. [Datos y esquemas](docs/08-datos-y-esquemas.md)
 9. [Personalización para tu perfil](docs/09-personalizacion.md)
 10. [Problemas frecuentes](docs/10-troubleshooting.md)
+11. [Ruta rápida: de cero a un CV v1.0.0](docs/11-ruta-rapida.md)
 
 ## Requisitos
 
 | Componente | Versión probada | Notas |
 |---|---|---|
 | Sistema | Windows 11 + PowerShell 7 | Los scripts son `.ps1`; el sistema funciona igual en macOS/Linux con ajustes de rutas |
-| OpenCode | v2.0.21 | `npm install -g @opencode/cli` o el binario de la web |
+| OpenCode | v2.0.21 probada (última: 2.1.4) | `npm install -g @opencode/cli` o el binario standalone. **No** por `winget`: `SST.opencode` instala la V1 |
 | Python (agente) | 3.14.7 | Crea `tools/.venv` |
 | Python (RenderCV) | 3.13.5 | Crea `rendercv/rendercv-env`. RenderCV 2.8 se probó en 3.13 |
 | RenderCV | 2.8 (`rendercv[full]`) | Genera PDF/PNG/HTML/Markdown/Typst |

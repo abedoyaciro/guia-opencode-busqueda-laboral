@@ -19,6 +19,7 @@ OpenCode o de red, no del esqueleto.
 | Síntoma | Causa probable | Arreglo |
 |---|---|---|
 | `opencode: command not found` | No está en el PATH | Reinstala con npm o añade la carpeta del binario al PATH; abre una consola nueva |
+| `opencode --version` dice `1.x` | Lo instalaste con `winget` (`SST.opencode`) o con la URL `/install`, que son V1 | Desinstala (`npm uninstall -g opencode-ai`) e instala `npm install -g @opencode/cli` |
 | Los comandos `/...` no aparecen | No arrancaste en la raíz del workspace | `opencode C:\ruta\busqueda-laboral`; los comandos se leen de `.opencode/commands/` |
 | El agente ignora las reglas | `AGENTS.md` fuera de la raíz | Debe estar en la raíz del proyecto que abres |
 | Cambiaste `opencode.json` y no toma efecto | Config en caché | `opencode service restart` |
@@ -128,6 +129,7 @@ activan `tools/common/resolver_dns.py` al arrancar (IPv4 forzado + respaldo
 |---|---|---|
 | Acentos rotos en la consola (`Ã©`) | Console cp1252 | `[Console]::OutputEncoding = [Text.Encoding]::UTF8` o usa Windows Terminal |
 | `UnicodeEncodeError` en Python | Salida estándar sin UTF-8 | El orquestador fija `PYTHONUTF8=1`; hazlo igual en scripts nuevos |
+| `UnicodeEncodeError: 'charmap' codec can't encode character '\u2713'` al usar `rendercv new` o `rendercv render` | Consola cp1252: la CLI imprime un `✓` | `$env:PYTHONUTF8='1'`. Puede salir **después** de generar los archivos: comprueba la carpeta antes de repetir |
 | Un YAML con tildes no parsea | BOM o codificación distinta | Guarda como UTF-8 sin BOM |
 | `pwsh` no encuentra el script | Estás en otra carpeta | Usa ruta absoluta: `pwsh -File C:\...\scripts\verificar.ps1` |
 

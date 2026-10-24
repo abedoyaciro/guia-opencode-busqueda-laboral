@@ -24,6 +24,11 @@
 .PARAMETER SaltarVenvs
     Solo copia el esqueleto, sin crear entornos ni instalar dependencias.
 
+.PARAMETER SoloRendercv
+    Crea únicamente rendercv/rendercv-env. Omite tools/.venv y Chromium de
+    Playwright: sirve si tu objetivo es generar el CV y no usar los servidores
+    MCP. Deja opencode.json sin servidores MCP (lo hace arranque.ps1).
+
 .EXAMPLE
     pwsh -File scripts/instalar.ps1 -Destino C:\Users\yo\busqueda-laboral
 
@@ -35,7 +40,8 @@ param(
     [string]$Destino = (Join-Path (Get-Location) 'busqueda-laboral'),
     [string]$PythonTools = 'python',
     [string]$PythonRenderCv = 'python',
-    [switch]$SaltarVenvs
+    [switch]$SaltarVenvs,
+    [switch]$SoloRendercv
 )
 
 $ErrorActionPreference = 'Stop'
@@ -67,21 +73,25 @@ Write-Host "OK: archivos copiados en $Destino"
 if ($SaltarVenvs) {
     Write-Host "`nSaltando entornos virtuales (-SaltarVenvs)." -ForegroundColor Yellow
 } else {
-    Write-Host "`n== 2/3 Entorno del agente (tools/.venv) ==" -ForegroundColor Cyan
-    $venvTools = Join-Path $Destino 'tools\.venv'
-    if (Test-Path $venvTools) {
-        Write-Host "Ya existe $venvTools, no lo recreo." -ForegroundColor Yellow
+    if ($SoloRendercv) {
+        Write-Host "`nModo CV (-SoloRendercv): omito tools/.venv y Chromium." -ForegroundColor Yellow
     } else {
-        New-Venv -Python $PythonTools -Ruta $venvTools
-        if ($LASTEXITCODE -ne 0) { throw "No pude crear tools/.venv con '$PythonTools'." }
+        Write-Host "`n== 2/3 Entorno del agente (tools/.venv) ==" -ForegroundColor Cyan
+        $venvTools = Join-Path $Destino 'tools\.venv'
+        if (Test-Path $venvTools) {
+            Write-Host "Ya existe $venvTools, no lo recreo." -ForegroundColor Yellow
+        } else {
+            New-Venv -Python $PythonTools -Ruta $venvTools
+            if ($LASTEXITCODE -ne 0) { throw "No pude crear tools/.venv con '$PythonTools'." }
+        }
+        $pyTools = Join-Path $venvTools 'Scripts\python.exe'
+        & $pyTools -m pip install --upgrade pip --quiet
+        & $pyTools -m pip install -r (Join-Path $Destino 'requirements-tools.txt')
+        if ($LASTEXITCODE -ne 0) { throw "Falló la instalación de requirements-tools.txt" }
+        Write-Host "Instalando Chromium para Playwright (puede tardar)..." -ForegroundColor DarkGray
+        & $pyTools -m playwright install chromium
+        if ($LASTEXITCODE -ne 0) { Write-Host "Aviso: Playwright no pudo instalar Chromium. Skills Boost no funcionará hasta arreglarlo." -ForegroundColor Yellow }
     }
-    $pyTools = Join-Path $venvTools 'Scripts\python.exe'
-    & $pyTools -m pip install --upgrade pip --quiet
-    & $pyTools -m pip install -r (Join-Path $Destino 'requirements-tools.txt')
-    if ($LASTEXITCODE -ne 0) { throw "Falló la instalación de requirements-tools.txt" }
-    Write-Host "Instalando Chromium para Playwright (puede tardar)..." -ForegroundColor DarkGray
-    & $pyTools -m playwright install chromium
-    if ($LASTEXITCODE -ne 0) { Write-Host "Aviso: Playwright no pudo instalar Chromium. Skills Boost no funcionará hasta arreglarlo." -ForegroundColor Yellow }
 
     Write-Host "`n== 3/3 Entorno de RenderCV (rendercv/rendercv-env) ==" -ForegroundColor Cyan
     $venvRcv = Join-Path $Destino 'rendercv\rendercv-env'
@@ -97,7 +107,17 @@ if ($SaltarVenvs) {
     if ($LASTEXITCODE -ne 0) { throw "Falló la instalación de RenderCV 2.8." }
 }
 
-Write-Host @"
+if ($SoloRendercv) {
+    Write-Host @"
+
+Listo (modo CV, sin servidores MCP). Siguientes pasos:
+  1. cd "$Destino"
+  2. Renderiza el CV:  rendercv\rendercv-env\Scripts\python.exe tools\rendercv\renderizar.py preview
+  3. Revisa los PDFs en rendercv\build\preview\
+  4. Verifica:  pwsh -File "$raiz\scripts\verificar.ps1" -Raiz "$Destino"
+"@ -ForegroundColor Green
+} else {
+    Write-Host @"
 
 Listo. Siguientes pasos:
   1. cd "$Destino"
@@ -107,3 +127,4 @@ Listo. Siguientes pasos:
   5. Verifica el entorno:  pwsh -File "$raiz\scripts\verificar.ps1" -Raiz "$Destino"
   6. Abre OpenCode en la carpeta:  opencode "$Destino"
 "@ -ForegroundColor Green
+}

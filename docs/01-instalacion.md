@@ -42,22 +42,55 @@ pwsh --version
 
 ### OpenCode
 
-En Windows no hay paquetes gestionados por el sistema. Dos vías válidas:
+> **No lo instales con `winget`.** El paquete `SST.opencode` que ofrece winget es
+> la versión **1.19.4**, o sea V1. Esta guía es para **V2**. Pasa lo mismo con la
+> URL antigua `https://opencode.ai/install`, que es el instalador de V1 (el de V2
+> es `https://opencode.ai/v2/install`).
+
+Métodos oficiales de V2 (según <https://opencode.ai/v2/docs/>):
+
+| Método | Comando |
+|---|---|
+| npm (Windows, macOS, Linux) | `npm install -g @opencode/cli` |
+| Instalador (macOS/Linux) | `curl -fsSL https://opencode.ai/v2/install \| bash` |
+| Homebrew (macOS/Linux) | `brew install anomalyco/tap/opencode-v2` |
+| bun | `bun install -g --trust @opencode/cli` |
+| pnpm | `pnpm add -g --allow-build=@opencode/cli @opencode/cli` |
+| yarn | `yarn global add @opencode/cli` |
+| mise | `mise use -g opencode` (requiere mise 2026.10.9 o superior) |
+| Docker | `ghcr.io/anomalyco/opencode:2.0.0` |
+| Binario standalone | lista abajo |
+
+En **Windows los gestores de paquetes no están soportados**: las dos vías son npm
+o el binario standalone.
 
 ```powershell
-# Opción A: npm (requiere Node.js 18+)
+# Vía 1: npm (requiere Node.js 18+)
 npm install -g @opencode/cli
 
-# Opción B: binario standalone x64
-# https://opencode.ai/update/api/latest/cli/opencode/opencode-windows-x64.zip
-# Descomprime y añade la carpeta al PATH.
+# Vía 2: binario standalone. Descomprime y añade la carpeta al PATH.
+#   x64:              https://opencode.ai/update/api/latest/cli/opencode/opencode-windows-x64.zip
+#   ARM64:            https://opencode.ai/update/api/latest/cli/opencode/opencode-windows-arm64.zip
+#   x64 sin AVX2:     https://opencode.ai/update/api/latest/cli/opencode/opencode-windows-x64-baseline.zip
 ```
 
-Comprueba:
+Detalles que ahorran tiempo:
+
+- El paquete de npm usa un script `postinstall` para elegir el binario nativo de
+  tu plataforma. Si instalas con **pnpm** o **bun** necesitas los flags
+  `--allow-build` / `--trust` de la tabla, o el binario no queda instalado.
+- Fijar una versión: `npm install -g @opencode/cli@2.0.21`.
+- Actualizar: `npm install -g @opencode/cli@latest`.
+- Hay app de escritorio y web además de la CLI, pero esta guía usa la CLI.
+
+Comprueba que quedó la **V2**:
 
 ```powershell
-opencode --version
+opencode --version   # esperado: 2.x
 ```
+
+Si devuelve `1.x`, tienes V1 instalada: desinstala
+(`npm uninstall -g opencode-ai`) y reinstala con `@opencode/cli`.
 
 ### Git
 
@@ -67,10 +100,12 @@ winget install --id Git.Git
 
 `make` es opcional y solo si vas a usar el `Makefile` del CV desde Git Bash o
 WSL. El flujo recomendado en Windows no lo necesita: el orquestador
-`tools/rendercv/renderizar.py` hace lo mismo.## 1.2 Crear el workspace
+`tools/rendercv/renderizar.py` hace lo mismo.
+
+## 1.2 Crear el workspace
 
 ```powershell
-git clone <URL_DE_ESTE_REPO> guia-busqueda-laboral
+git clone https://github.com/abedoyaciro/guia-opencode-busqueda-laboral guia-busqueda-laboral
 pwsh -File guia-busqueda-laboral\scripts\instalar.ps1 -Destino C:\ruta\busqueda-laboral
 ```
 

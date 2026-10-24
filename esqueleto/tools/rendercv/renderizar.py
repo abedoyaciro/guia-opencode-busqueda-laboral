@@ -25,7 +25,6 @@ Uso:
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import re
 import shutil
@@ -34,7 +33,24 @@ import sys
 from datetime import date
 from pathlib import Path
 
-import yaml
+# PyYAML viene con tools/.venv; el venv de RenderCV solo trae ruamel.yaml.
+# Este orquestador debe poder correr con cualquiera de los dos intérpretes.
+try:
+    import yaml
+
+    def _yaml_dump(obj: dict) -> str:
+        return yaml.dump(obj, allow_unicode=True, sort_keys=False)
+except ImportError:  # pragma: no cover - depende del intérprete
+    from io import StringIO
+
+    from ruamel.yaml import YAML as _RuamelYAML
+
+    def _yaml_dump(obj: dict) -> str:
+        y = _RuamelYAML()
+        y.default_flow_style = False
+        buf = StringIO()
+        y.dump(obj, buf)
+        return buf.getvalue()
 
 RAIZ = Path(__file__).resolve().parents[2]
 RENDERCV = RAIZ / "rendercv"
@@ -73,11 +89,19 @@ def render(cv: Path, design: Path, locale: Path, out: Path,
 def modo_preview() -> None:
     combos = [("es", "harvard"), ("es", "engineeringresumes"),
               ("en", "harvard"), ("en", "engineeringresumes")]
+    hechos = 0
     for idioma, design in combos:
-        out = RENDERCV / "build" / "preview" / f"{idioma}-{'er' if design == 'engineeringresumes' else 'harvard'}"
         cv = SRC / "cv" / f"{CANDIDATO}.{idioma}.yaml"
+        if not cv.exists():
+            print(f"-- omito {idioma}-{design}: no existe src/cv/{cv.name}")
+            continue
+        out = RENDERCV / "build" / "preview" / f"{idioma}-{'er' if design == 'engineeringresumes' else 'harvard'}"
         pdf = render(cv, DESIGNES[design], LOCALES[idioma], out)
         print(f"OK {idioma}-{design}: {pdf}")
+        hechos += 1
+    if not hechos:
+        print(f"Error: no existe ningún src/cv/{CANDIDATO}.{{es,en}}.yaml", file=sys.stderr)
+        sys.exit(1)
     print("\nPreview completa en rendercv/build/preview/")
 
 
@@ -120,6 +144,9 @@ def modo_release(version: str) -> None:
         vid = f"{idioma}-{'er' if design == 'engineeringresumes' else 'harvard'}"
         out = tmp / vid
         cv = SRC / "cv" / f"{CANDIDATO}.{idioma}.yaml"
+        if not cv.exists():
+            print(f"-- omito {vid}: no existe src/cv/{cv.name}")
+            continue
         render(cv, DESIGNES[design], LOCALES[idioma], out)  # con PNGs
         vdir = dest / vid
         vdir.mkdir(parents=True)
@@ -149,7 +176,7 @@ def modo_release(version: str) -> None:
         "variants": variantes,
     }
     (dest / "manifest.yaml").write_text(
-        yaml.dump(manifest, allow_unicode=True, sort_keys=False), encoding="utf-8")
+        _yaml_dump(manifest), encoding="utf-8")
     (RENDERCV / "versions" / "latest.txt").write_text(version + "\n", encoding="utf-8")
     shutil.rmtree(tmp, ignore_errors=True)
     print(f"OK release {version} -> rendercv/versions/{version}/")
